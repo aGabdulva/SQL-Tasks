@@ -1,0 +1,23 @@
+В предположении, что приход и расход денег на каждом пункте приема фиксируется произвольное число раз (первичным ключом в таблицах является столбец code), требуется получить таблицу, в которой каждому пункту за каждую дату выполнения операций будет соответствовать одна строка.
+Вывод: point, date, суммарный расход пункта за день (out), суммарный приход пункта за день (inc). Отсутствующие значения считать неопределенными (NULL).
+
+WITH i AS
+(SELECT point, date, SUM(inc) AS inc
+FROM Income
+GROUP BY point, date),
+o as
+(SELECT point, date, SUM(out) AS out
+FROM Outcome
+GROUP BY point, date)
+
+SELECT i.point, i.date, o.out AS outcome, i.inc AS income 
+FROM i
+LEFT JOIN o
+ON i.point = o.point AND i.date = o.date
+
+UNION 
+
+SELECT o.point, o.date, o.out AS outcome, i.inc AS income 
+FROM i
+RIGHT JOIN o
+ON i.point = o.point AND i.date = o.date
