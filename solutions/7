@@ -1,0 +1,24 @@
+Найдите номера моделей и цены всех имеющихся в продаже продуктов (любого типа) производителя B (латинская буква).
+
+SELECT DISTINCT pc.model, pc.price 
+FROM Product p 
+JOIN PC pc
+ON p.model = pc.model
+WHERE p.maker = 'B'
+
+UNION 
+
+SELECT DISTINCT lp.model, lp.price 
+FROM Product p 
+JOIN Laptop lp
+ON p.model = lp.model
+WHERE p.maker = 'B'
+
+UNION
+
+
+SELECT DISTINCT pr.model, pr.price 
+FROM Product p 
+JOIN Printer pr
+ON p.model = pr.model
+WHERE p.maker = 'B'
