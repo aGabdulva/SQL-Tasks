@@ -1,0 +1,19 @@
+Найдите классы, в которые входит только один корабль из базы данных (учесть также корабли в Outcomes).
+
+SELECT class FROM
+(SELECT c.class AS class, COUNT(s.name) AS cnt
+FROM Classes c
+JOIN Ships s
+ON c.class = s.class
+GROUP BY c.class
+
+UNION ALL
+
+SELECT c.class AS classs, 1 AS cnt
+FROM Classes c
+JOIN Outcomes o
+ON c.class = o.ship
+WHERE o.ship NOT IN(SELECT name FROM Ships)
+GROUP BY c.class) allShips
+GROUP BY class
+HAVING SUM(cnt) = 1
