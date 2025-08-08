@@ -1,0 +1,15 @@
+Одной из характеристик корабля является половина куба калибра его главных орудий (mw). 
+С точностью до 2 десятичных знаков определите среднее значение mw для кораблей каждой страны, у которой есть корабли в базе данных.
+
+WITH all_ships as (
+  SELECT class, name
+  FROM ships
+  UNION
+  SELECT ship, ship as name
+  FROM outcomes
+)
+
+SELECT country, cast(avg(power(bore, 3)/2) AS DECIMAL(6, 2)) as weight
+FROM classes as c
+JOIN all_ships as s ON c.class = s.class
+GROUP BY country
