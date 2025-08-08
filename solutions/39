@@ -1,0 +1,12 @@
+Найдите корабли, `сохранившиеся для будущих сражений`; т.е. выведенные из строя в одной битве (damaged), они участвовали в другой, произошедшей позже.
+
+SELECT DISTINCT out.ship
+FROM Outcomes out
+JOIN Battles b
+ON b.name = out.battle
+WHERE result = 'damaged'
+AND EXISTS(SELECT ba.name FROM Battles ba
+JOIN Outcomes o 
+ON o.battle = ba.name
+WHERE o.ship = out.ship
+AND ba.date > b.date)
