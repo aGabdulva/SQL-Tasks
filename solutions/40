@@ -1,0 +1,10 @@
+Найти производителей, которые выпускают более одной модели, при этом все выпускаемые производителем модели являются продуктами одного типа.
+Вывести: maker, type
+
+SELECT maker, type 
+FROM Product p 
+WHERE NOT EXISTS (
+SELECT type FROM Product
+WHERE maker = p.maker AND type != p.type)
+GROUP BY maker, type
+HAVING COUNT(model) > 1
