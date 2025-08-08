@@ -1,0 +1,46 @@
+Определить страны, которые потеряли в сражениях все свои корабли.
+
+WITH TotalShips AS (
+    SELECT c.country, COUNT(*) AS total_count
+    FROM (
+        SELECT c.country, s.name AS ship
+        FROM Classes c
+        JOIN Ships s ON s.class = c.class
+        
+        UNION
+        
+        SELECT c.country, o.ship
+        FROM Classes c
+        JOIN Outcomes o ON o.ship = c.class
+    ) AS all_ships
+    JOIN Classes c ON all_ships.ship = c.class OR all_ships.ship IN (
+        SELECT name FROM Ships WHERE class = c.class
+    )
+    GROUP BY c.country
+),
+SunkShips AS (
+    SELECT c.country, COUNT(*) AS sunk_count
+    FROM (
+        SELECT c.country, sa.name AS ship
+        FROM Classes c
+        JOIN Ships sa ON sa.class = c.class
+        JOIN Outcomes oa ON oa.ship = sa.name
+        WHERE oa.result = 'sunk'
+        
+        UNION
+        
+        SELECT c.country, oa.ship
+        FROM Classes c
+        JOIN Outcomes oa ON oa.ship = c.class
+        WHERE oa.result = 'sunk'
+    ) AS sunk_ships
+    JOIN Classes c ON sunk_ships.ship = c.class OR sunk_ships.ship IN (
+        SELECT name FROM Ships WHERE class = c.class
+    )
+    GROUP BY c.country
+)
+
+SELECT t.country
+FROM TotalShips t
+JOIN SunkShips s ON t.country = s.country
+WHERE t.total_count = s.sunk_count
